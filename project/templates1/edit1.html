@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Uredi</title>
+</head>
+<body>
+    <h1>Uredi zapisek</h1>
+
+    <form action="/update/{{ note.id }}" method="post">
+        <input type="text" name="title" value="{{ note.title }}" required><br>
+        <textarea name="content" required>{{ note.content }}</textarea><br>
+        <button type="submit">Shrani spremembe</button>
+    </form>
+
+    <a href="/index1">Nazaj</a>
+</body>
+</html>
