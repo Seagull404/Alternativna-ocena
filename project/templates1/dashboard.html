@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <h1>Zapiski</h1>
+    <h2>Lastnik je {{ user }}:</h2>
+    <textarea name="" id="noteTitle"></textarea><br>
+    <textarea name="" id="note"></textarea>
+    <button type="button" onclick="sendNote()">Shrani</button>
+
+    {% for note in notes %}
+    <div class="note-div">
+        <h2>{{ note.title }}</h2>
+        <p>{{ note.content }}</p>
+
+        <button type="button" onclick="editNote('{{ note.doc_id }}', '{{ note.title }}', '{{ note.content }}')">Uredi</button>
+    
+        <button type="button" onclick="editNote('{{ note.doc_id }}')">Izbriši</button>
+    </div>
+    {% endfor %}
+
+    <button id="logout-button" onclick="logout()">Logout</button>
+
+    <script>
+        let editingId = null;
+
+        function logout() {
+            $.ajax({
+                "url": "/logout",
+                "type": "GET",
+                "success": function(data) {
+                    window.location.reload();
+                    console.log("Logout success.");
+                }
+            });
+        }
+
+        function sendNote() {
+            let titleBox = document.getElementById("noteTitle")
+            let contentBox = document.getElementById("note")
+            let title = titleBox.value
+            let content = contentBox.value
+
+            if (editingId !== null) {
+                $.ajax({
+                    "url": "/editNote/" + editingId,
+                    "type": "POST",
+                    "data": {
+                        "title": title,
+                        "content": content
+                    },
+                    "success": function(data) {
+                        console.log("Posodobljeno");
+                        editingId = null;
+                        window.location.reload();
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    "url": "/saveNote",
+                    "type": "POST",
+                    "data": {
+                        "title": title,
+                        "content": content
+                    },
+                    "success": function(data) {
+                        console.log("Dodano");
+                        window.location.reload();
+                    }
+                });
+            }
+
+            titleBox.innerText = "";
+            contentBox.innerText = "";
+            window.location.reload();
+        }
+
+        function deleteNote(id) {
+            $.ajax({
+            "url": "/deleteNote/" + id,
+            "type": "POST",
+            "success": function(data) {
+                console.log("Izbrisano");
+                window.location.reload();
+            }
+            });
+        }
+
+        function editNote(id, oldTitle, oldContent) {
+            document.getElementById("noteTitle").value = oldTitle;
+            document.getElementById("note").value = oldContent;
+            scrollTo(0,0);
+            editngId = id;
+        }
+    </script>
+</body>
+</html>
