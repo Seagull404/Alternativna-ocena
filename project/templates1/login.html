@@ -3,9 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body>
-    
+<body class="oseba-page">
+    <div class="container">
+        <h1>Login</h1>
+        <form action="/login" method="post">
+            <input type="text" name="username" placeholder="username"><br>
+            <input type="password" name="password" placeholder="password"><br>
+
+            <button type="submit">Prijavi se</button><br>
+            <a href="/forgot">Ste pozabili geslo?</a>
+            <a id="nimas_racuna_link" href="/register">Še nimate računa?</a>
+        </form>
+    </div>
 </body>
 </html>
