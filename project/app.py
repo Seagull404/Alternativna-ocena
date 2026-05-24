@@ -49,5 +49,97 @@ def login():
 
     return render_template("login.html")
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+@app.route("/register", methods = ["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = generate_password_hash(request.form["password"])
+
+        question = request.form["question"]
+        answer = request.form["answer"]
+        
+        if users.search(User.username == username):
+            return "Uporabniško ime že obstaja."
+        
+        users.inser({
+            "username": username,
+            "password": password,
+            "question": question,
+            "asnwer": answer
+        })
+        return redirect("/login")
+    
+    return render_template("register.html")
+
+@app.route("/forgot", methods = ["GET", "POST"])
+def forgot():
+    if request.method == "POST":
+        username = request.form["username"]
+        user = users.get(User.username == username)
+
+        if "answer" in request.form:
+            answer = request.form["answer"].lower()
+            new_password = generate_password_hash(request.form["password"])
+
+            if user and user["answer"] == answer:
+                users.update({"password": new_password}, User.username == username)
+                return redirect("/login")
+            return "Napačen odgovor."
+        
+        if user:
+            return render_template("forgot.html", question=user["question"], user=username)
+
+        return "Uporabnik ne obstaja."
+    
+    return render_template("forgot.html")
+
+@app.route("/dashboard")
+def dashboard():
+    if "user" not in session:
+        return redirect("/login")
+    
+    userNotes = notes.search(Notes.username == session["user"])
+    return render_template("dashboard.html", user = session["user"], notes = userNotes)
+
+
+@app.route("/saveNote", methods=["POST"])
+def saveNote():
+    if request.method == "POST":
+        data = request.form
+        print(data)
+
+        notes.insert({'username': session["user"], 'title': data["title"], 'content': data["content"]})
+
+        return {"status": 200}
+    
+@app.route("/deleteNote/<int:id>", methods=["POST"])
+def deleteNote(id):
+    if "user" not in session:
+        return {"status": 400}
+    
+    notes.remove(doc_ids=[id])
+    return {"status": 200}
+
+@app.route("/editNote/<int:id>", methods=["POST"])
+def editNote(id):
+    if "user" not in session:
+        return {"status": 403}
+    
+    title = request.form["title"]
+    content = request.form["content"]
+
+    notes.update(
+        {"title": title, "content": content},
+        doc_ids=[id]
+    )
+
+    return {"status": 200}
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.clear()
+
+    return {"status": 200}
+
+
+app.run(debug=True)
