@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="oseba-page">
+    <div id="container">
+        <h1>Registriraj se</h1>
+        <form action="/register" method="POST">
+            <input type="text" name="username" placeholder="username" required>
+            <input type="password" name="password" placeholder="password" required><br>
+            <input name="question" placeholder="Varnostno vprašanje (npr. ime psa)">
+            <input name="answer" placeholder="Odgovor">
+            <button type="submit">Registriraj se:</button><br>
+
+            <a id="login" href="/login">Si ze registriran?</a>
+        </form>
+    </div>
+</body>
+</html>

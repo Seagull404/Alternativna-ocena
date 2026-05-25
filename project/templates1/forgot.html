@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pozabljeno geslo</title>
+    <link rel="stylesheet" href="static1/styles.css">
+</head>
+<body>
+    <div class="oseba-page">
+        <div class="container">
+            <h2>Ste pozabili geslo?</h2>
+            <form method="POST">
+                <input type="text" name="username" placeholder="Uporabniško ime" required>
+                {% if question %}
+                    <p>{{ question }}</p>
+                    <input type="text" name="answer" placeholder="Odgovor" required>
+                    <input type="password" name="password" placeholder="Novo geslo" required>
+                {% endif %}
+                <button type="submit">Spremenite geslo</button>
+            </form>
+            
+            <a href="/login">Login</a>
+        </div>
+    </div>
+</body>
+</html>
