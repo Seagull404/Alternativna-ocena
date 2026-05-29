@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FistroGram</title>
+    <link rel="stylesheet" href="static2/styles.css">
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1>FistroGram</h1>
+    <p style="text-indent: 5px; font-weight: bolder;">Prijavljen je: <p style="font-weight: normal; text-indent: 40px;">{{ user }}</p></p>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+
+    <hr>
+
+    <div class="post-form">
+        <form action="/add_post" method="POST" enctype="multipart/form-data">
+            <input name="text" placeholder="Naslov">
+            <input name="text" placeholder="Vsebina">
+            <input type="file" name="image">
+        </form>
+    </div>
+
+    <hr>
+</body>
+</html>

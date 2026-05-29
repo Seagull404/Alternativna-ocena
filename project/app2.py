@@ -103,6 +103,51 @@ def register():
     return render_template("register.html")
 
 
+#Login
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        conn = get_db()
+        user = conn.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
+        conn.close()
+
+        if user and check_password_hash(user["password"], password):
+            session["user"] = username
+            session["is_admin"] = user["is_admin"]
+            return redirect("/")
+        
+        return "Napaka pri loginu."
+    return render_template("login.html")
+
+#Logout
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.clear()
+    return redirect("/login")
+
+#Objavi
+@app.route("/add_post", methods=["POST"])
+def add_post():
+    if "user" not in session:
+        return redirect("/login")
+    text = request.form["text"]
+    opis = request.form["opis"]
+    image = request.files["image"]
+    filename = None
+    if image:
+        filename = image.filename
+        image.save(os.path.join(UPLOAD_FOLDER, filename))
+
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO posts(user, text, opis, image) VALUES(?,?,?,?)", (session["user"], text, opis, filename))
+    conn.commit()
+    conn.close()
+    return redirect("/")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
