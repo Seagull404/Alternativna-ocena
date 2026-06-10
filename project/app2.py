@@ -148,6 +148,69 @@ def add_post():
     conn.close()
     return redirect("/")
 
+# Like
+@app.route("/like/<int:id>", methods=["POST"])
+def like(id):
+    if "user" not in session:
+        return {"status": 403}
+    conn = get_db()
+    # +1 like
+    try:
+        conn.execute(
+            "INSERT INTO likes(user, post_id) VALUES(?,?)",
+            (session["user"], id)
+        )
+        conn.execute(
+            "UPDATE posts SET likes = likes + 1 WHERE id=?",
+            (id,)
+        )
+        conn.commit()
+    except:
+        # -1 like
+        conn.execute(
+            "UPDATE posts SET likes = likes - 1 WHERE id=?",
+            (id,)
+        )
+        conn.commit()
+        return {"status": "already_liked"}
+    return {"status": "liked"}
+
+#Izbriši
+@app.route("/delete_post/<int:id>", methods=["POST"])
+def delete_post(id):
+    if "user" not in session:
+        return {"status": 403}
+    conn = get_db()
+    post = conn.execute("SELECT * FROM posts WHERE id=?", (id,)).fetchone()
+    if not post:
+        return {"status": 404}
+    #sam lastnik izbrise
+    if post["user"] != session["user"] and not session.get("is_admin"):
+        return {"status": 403}
+    #izbrisi sliko
+    if post["image"]:
+        path = os.path.join("static2/uploads", post["image"])
+        if os.path.exists(path):
+            os.remove(path)
+    #izbris post
+    conn.execute("DELETE FROM posts WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+    return {"status": "deleted"}
+
+#Koment
+@app.route("/add_comment/<int:post_id>", methods=["POST"])
+def add_comment(post_id):
+    if "user" not in session:
+        return {"status": 403}
+    text = request.form["text"]
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO comments(post_id, user, text) VALUES(?,?,?)",
+            (post_id, session["user"], text)
+        )
+        conn.commit()
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
