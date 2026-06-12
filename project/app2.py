@@ -184,15 +184,15 @@ def delete_post(id):
     post = conn.execute("SELECT * FROM posts WHERE id=?", (id,)).fetchone()
     if not post:
         return {"status": 404}
-    #sam lastnik izbrise
+    #sam lastnik lahko izbrise
     if post["user"] != session["user"] and not session.get("is_admin"):
         return {"status": 403}
-    #izbrisi sliko
+    #izbrisi
     if post["image"]:
         path = os.path.join("static2/uploads", post["image"])
         if os.path.exists(path):
             os.remove(path)
-    #izbris post
+    #izbrisi post
     conn.execute("DELETE FROM posts WHERE id=?", (id,))
     conn.commit()
     conn.close()
@@ -211,6 +211,68 @@ def add_comment(post_id):
         )
         conn.commit()
     return redirect("/")
+
+#Izbrisi koment
+@app.route("/delete_comment/<int:id>", methods=["POST"])
+def delete_comment(id):
+    if "user" not in session:
+        return {"status": 403}
+    conn = get_db()
+    comment = conn.execute("SELECT * FROM comments WHERE id=?", (id,)).fetchone()
+
+    if not comment:
+        conn.close()
+        return {"status": 404}
+    
+    post = conn.execute("SELECT * FROM posts WHERE id=?", (comment["post_id"],)).fetchone()
+
+    post_user = post["user"] if post else None
+    is_admin = session.get("is_admin") == 1
+    post_owner = post["user"] if post else None
+
+    allowed = (comment["user"] == session["user"] or post_owner == session["user"] or is_admin)
+
+    if not allowed:
+        conn.close()
+        return {"status": 403}
+    
+    conn.execute("DELETE FROM comments WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+
+    return {"status": "deleted"}
+
+@app.route("/admin/delete_user/<username>", methods=["POST"])
+def delete_user(username):
+    if "user" not in session or not session.get("is_admin"):
+        return {"status": 403}
+    
+    conn = get_db()
+    #izbrise LIKE od uporabnika
+    conn.execute("DELETE FROM likes WHERE user=?", (username,))
+    #izbrise KOMENTAR od uporabnika
+    conn.execute("DELETE FROM comments WHERE user=?", (username,))
+    #poišče vse POSTE od uporabnika
+    posts = conn.execute("SELECT id FROM posts WHERE user=?", (username,)).fetchone
+
+    post_ids = [p["id"] for p in posts]
+
+
+    if post_ids:
+        #izbrisi komente na teh določenih postih
+        conn.executemany("DELETE FROM comments WHERE post_id=?", [(pid,) for pid in post_ids])
+        #izbrisi like na teh določenih postih
+        conn.executemany("DELETE FROM likes WHERE post_id=?", [(pid,) for pid in post_ids])
+    
+    #izbrise poste
+    conn.execute("DELETE FROM posts WHERE user=?", (username,))
+    #izbrise userja
+    conn.execute("DELETE FROM users WHERE username=?", (username,))
+
+    conn.commit()
+    conn.close()
+
+    return {"status": "deleted"}
 
 if __name__ == "__main__":
     app.run(debug=True)
