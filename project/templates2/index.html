@@ -19,9 +19,108 @@
             <input name="text" placeholder="Naslov">
             <input name="text" placeholder="Vsebina">
             <input type="file" name="image">
+            <button>Post</button>
         </form>
     </div>
 
     <hr>
+
+    {% for p in posts %}
+    <div class="post">
+        <h3 style="text-decoration: underline; color: aqua;">{{ p.user }}</h3>
+        {% if session.get("is_admin") %}
+        <button onclick="deleteUser('{{ user.username }}')">
+            Delete user
+        </button>
+        {% endif %}
+        <p style="font-size: 20px; text-transform: uppercase;">{{ p.text }}</p>
+        <p>{{ p.opis }}</p>
+
+        {% if p.image %}
+        <img src="{{ url_for('static', filename='uploads/' + p['image']) }}" width="200">
+        {% endif %}
+
+        <button class="like" onclick="likePost({{ p.id }})">
+            {{ p.likes }}
+        </button>
+
+        {% if p.user == user or session.get("is_admin") %}
+        <button class="delete" onclick="deletePost({{ p.id }})">
+            Izbriši
+        </button>
+        {% endif %}
+
+
+        <h4>Komentarji</h4>
+
+        <div class="comment-box">
+            <form method="POST" action="/add_comment/{{ p['id'] }}">
+                <input name="text" placeholder="Komentiraj...">
+                <button>Pošlji</button>
+            </form>
+
+            {% for c in comments %}
+            {% if c.post_id == p.id %}
+            <div class="comment">
+                <b>{{ c.user }}:</b> {{ c.text }}
+                {% if p.user == user or c.user == user or session.get("is_admin") %}
+                <button class="delete-comment-btn" onclick="deleteComment({{ c.id }})">
+                    Izbriši
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+    <script>
+        function likePost(id) {
+            fetch("/like/" + id, { method: "POST" })
+                .then(() => location.reload())
+        }
+        function deletePost(id) {
+            fetch("/delete_post/" + id, {
+                method: "POST"
+            }).then(() => location.reload())
+        }
+        function logout() {
+            $.ajax({
+                'url': '/logout',
+                'type': 'GET',
+                'success': function (data) {
+                    window.location.reload();
+                    console.log("Logout success.");
+                }
+            });
+        }
+        function deleteComment(id) {
+            fetch("/delete_comment/" + id, {
+                method: "POST"
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === "deleted") {
+                        location.reload();
+                    }
+                });
+        }
+        function deleteUser(username) {
+            let ok = confirm("Ali si prepričan, da želiš izbrisati userja '" + username + "'?\n\nTo bo izbrisalo vse njegove poste, komentarje in like.");
+            if (ok) {
+                return;
+            }
+            fetch("/admin/delete_user/" + username, {
+                method: "POST"
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "deleted") {
+                    alert("User deleted");
+                    location.reload();
+                }
+            });
+        }
+    </script>
 </body>
 </html>

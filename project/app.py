@@ -61,7 +61,7 @@ def register():
         if users.search(User.username == username):
             return "Uporabniško ime že obstaja."
         
-        users.inser({
+        users.insert({
             "username": username,
             "password": password,
             "question": question,
