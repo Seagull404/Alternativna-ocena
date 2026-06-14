@@ -16,7 +16,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 #DATABASE
 def get_db():
-    conn = sqlite3.connect("db/social.db")
+    conn = sqlite3.connect("db/platform.db")
     conn.row_factory = sqlite3.Row
     return conn
 
