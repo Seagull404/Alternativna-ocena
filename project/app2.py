@@ -135,9 +135,9 @@ def add_post():
         return redirect("/login")
     text = request.form["text"]
     opis = request.form["opis"]
-    image = request.files["image"]
+    image = request.files.get("image")
     filename = None
-    if image:
+    if image and image.filename:
         filename = image.filename
         image.save(os.path.join(UPLOAD_FOLDER, filename))
 
@@ -154,21 +154,27 @@ def like(id):
     if "user" not in session:
         return {"status": 403}
     conn = get_db()
-    # +1 like
-    try:
+    existing = conn.execute(
+    "SELECT * FROM likes WHERE user=? AND post_id=?",
+    (session["user"], id)
+).fetchone()
+
+    if existing:
+        conn.execute(
+            "DELETE FROM likes WHERE user=? AND post_id=?",
+            (session["user"], id)
+        )
+        conn.execute(
+            "UPDATE posts SET likes = likes - 1 WHERE id=?",
+            (id,)
+        )
+    else:
         conn.execute(
             "INSERT INTO likes(user, post_id) VALUES(?,?)",
             (session["user"], id)
         )
         conn.execute(
             "UPDATE posts SET likes = likes + 1 WHERE id=?",
-            (id,)
-        )
-        conn.commit()
-    except:
-        # -1 like
-        conn.execute(
-            "UPDATE posts SET likes = likes - 1 WHERE id=?",
             (id,)
         )
         conn.commit()
@@ -253,7 +259,7 @@ def delete_user(username):
     #izbrise KOMENTAR od uporabnika
     conn.execute("DELETE FROM comments WHERE user=?", (username,))
     #poišče vse POSTE od uporabnika
-    posts = conn.execute("SELECT id FROM posts WHERE user=?", (username,)).fetchone
+    posts = conn.execute("SELECT id FROM posts WHERE user=?", (username,)).fetchone()
 
     post_ids = [p["id"] for p in posts]
 

@@ -40,12 +40,12 @@
         <img src="{{ url_for('static', filename='uploads/' + p['image']) }}" width="200">
         {% endif %}
 
-        <button class="like" onclick="likePost({{ p.id }})">
+        <button class="like" onclick="likePost(p.id)"> <!----------------<----------------------------------------------->
             {{ p.likes }}
         </button>
 
         {% if p.user == user or session.get("is_admin") %}
-        <button class="delete" onclick="deletePost({{ p.id }})">
+        <button class="delete" onclick="deletePost(p.id)"> <!----------------<----------------------------------------------->
             Izbriši
         </button>
         {% endif %}
@@ -64,7 +64,7 @@
             <div class="comment">
                 <b>{{ c.user }}:</b> {{ c.text }}
                 {% if p.user == user or c.user == user or session.get("is_admin") %}
-                <button class="delete-comment-btn" onclick="deleteComment({{ c.id }})">
+                <button class="delete-comment-btn" onclick="deleteComment(c.id)"> <!----------------<----------------------------------------------->
                     Izbriši
                 </button>
                 {% endif %}
