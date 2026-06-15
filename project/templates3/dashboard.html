@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <title>Gesla</title>
+    </head>
+    <body>
+        <h2>Prijavljen {{user}}</h2>
+
+        <form method="post" action="/dashboard">
+            <input type="number" name="dolzina" placeholder="Password length">
+            <button type="submit">Generiraj</button><br>
+
+            <input type="checkbox" id="option1" name="option1" value="1">
+            <label for="option1">Words</label><br>
+
+            <input type="checkbox" id="option2" name="option2" value="2">
+            <label for="option2">Numbers</label><br>
+
+            <input type="checkbox" id="option3" name="option3" value="3">
+            <label for="option3">Signs</label><br>
+        </form>
+
+        {% if password %}
+            <p>Geslo: <b>{{password}}</b></p>
+            <p>Strength: <b>{{strength}}</b></p>
+
+            <form method="post" action="/shrani">
+                <input type="text" name="name" placeholder="Ime gesla">
+                <input type="hidden" name="password" value="{{password}}">
+                <button type="submit">Shrani</button>
+            </form>
+        {% endif %}
+
+        
+        <h3>Vsa gesla:</h3>
+        
+        {% for docs in doc %}
+            <p>
+                {{docs.name}} |  {{docs.password}}
+            </p>
+        {% endfor %}
+
+        <a href="/logout">Logout</a>
+    </body>
+</html>

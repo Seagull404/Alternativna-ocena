@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+
+  --text: #1f2937;
+  --muted: #6b7280;
+
+  --border: #e5e7eb;
+  --shadow: 0 10px 25px rgba(0,0,0,0.06);
+
+  --radius: 12px;
+  --transition: 0.2s ease;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 2rem 1rem;
+}
+
+
+h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+
+form {
+  width: 100%;
+  max-width: 420px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  padding: 1.8rem;
+  box-shadow: var(--shadow);
+
+  margin-bottom: 1.5rem;
+}
+
+
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+  width: 100%;
+
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.9rem;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: var(--surface-2);
+  color: var(--text);
+
+  font-size: 0.95rem;
+
+  transition: var(--transition);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+
+label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: inline-block;
+  margin-bottom: 0.3rem;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--primary);
+  transform: scale(1.05);
+  margin-right: 0.4rem;
+}
+
+
+button {
+  width: 100%;
+
+  padding: 0.75rem;
+
+  border: none;
+  border-radius: 10px;
+
+  background: var(--primary);
+  color: white;
+
+  font-weight: 600;
+  font-size: 0.95rem;
+
+  cursor: pointer;
+
+  transition: var(--transition);
+}
+
+button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+
+form[action="/save_password"] button {
+  background: #10b981;
+}
+
+form[action="/save_password"] button:hover {
+  background: #059669;
+}
+
+
+p {
+  width: 100%;
+  max-width: 420px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary);
+
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+
+  border-radius: 10px;
+
+  color: var(--text);
+  font-size: 0.9rem;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+
+p b {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+a {
+  display: inline-block;
+  margin-top: 1rem;
+
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-decoration: none;
+
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--primary);
+}
+
+a[href="/logout"] {
+  color: #ef4444;
+}
+
+a[href="/logout"]:hover {
+  color: #dc2626;
+}
+
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+::selection {
+  background: rgba(37, 99, 235, 0.2);
+}
+
+@media (max-width: 480px) {
+  form {
+    padding: 1.2rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+}
