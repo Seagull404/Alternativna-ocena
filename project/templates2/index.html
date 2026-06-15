@@ -17,7 +17,7 @@
     <div class="post-form">
         <form action="/add_post" method="POST" enctype="multipart/form-data">
             <input name="text" placeholder="Naslov">
-            <input name="text" placeholder="Vsebina">
+            <input name="opis" placeholder="Vsebina">
             <input type="file" name="image">
             <button>Post</button>
         </form>
@@ -41,7 +41,7 @@
         {% endif %}
 
         <button class="like" onclick="likePost(p.id)"> <!----------------<----------------------------------------------->
-            {{ p.likes }}
+        ❤️    {{ p.likes }}
         </button>
 
         {% if p.user == user or session.get("is_admin") %}

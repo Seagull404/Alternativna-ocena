@@ -11,12 +11,12 @@ app = Flask(
 
 app.secret_key = "Basket!!24"
 
-UPLOAD_FOLDER = "static2/uploads"
+UPLOAD_FOLDER = "project/static2/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 #DATABASE
 def get_db():
-    conn = sqlite3.connect("db/platform.db")
+    conn = sqlite3.connect("project/db/platform.db")
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -135,9 +135,9 @@ def add_post():
         return redirect("/login")
     text = request.form["text"]
     opis = request.form["opis"]
-    image = request.files.get("image")
+    image = request.files["image"]
     filename = None
-    if image and image.filename:
+    if image:
         filename = image.filename
         image.save(os.path.join(UPLOAD_FOLDER, filename))
 
