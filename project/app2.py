@@ -92,7 +92,7 @@ def register():
         conn = get_db()
         try:
             conn.execute("INSERT INTO users(username, password) VALUES(?,?)",
-                         (username, password))
+                (username, password))
             conn.commit()
         except:
             return "Uporabnik že obstaja"
