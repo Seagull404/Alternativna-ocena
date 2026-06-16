@@ -65,7 +65,7 @@ def register():
             "username": username,
             "password": password,
             "question": question,
-            "asnwer": answer
+            "answer": answer
         })
         return redirect("/login")
     
