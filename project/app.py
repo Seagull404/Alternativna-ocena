@@ -54,9 +54,6 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = generate_password_hash(request.form["password"])
-
-        question = request.form["question"]
-        answer = request.form["answer"]
         
         if users.search(User.username == username):
             return "Uporabniško ime že obstaja."
@@ -64,8 +61,6 @@ def register():
         users.insert({
             "username": username,
             "password": password,
-            "question": question,
-            "asnwer": answer
         })
         return redirect("/login")
     
